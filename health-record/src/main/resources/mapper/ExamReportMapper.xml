@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.record.mapper.ExamReportMapper">
+
+    <resultMap id="ReportListMap" type="com.health.record.entity.ExamReportListItem">
+        <id column="id" property="id"/>
+        <result column="report_no" property="reportNo"/>
+        <result column="report_title" property="reportTitle"/>
+        <result column="exam_date" property="examDate"/>
+        <result column="hospital" property="hospital"/>
+        <result column="abnormal_count" property="abnormalCount"/>
+        <result column="total_count" property="totalCount"/>
+    </resultMap>
+
+    <select id="selectReportListWithAbnormalCount" resultMap="ReportListMap">
+        SELECT r.id, r.report_no, r.report_title, r.exam_date, r.hospital,
+               COUNT(ri.id) AS total_count,
+               SUM(CASE WHEN ri.is_abnormal = 1 THEN 1 ELSE 0 END) AS abnormal_count
+        FROM exam_report r
+        LEFT JOIN exam_report_item ri ON r.id = ri.report_id
+        WHERE r.user_id = #{userId}
+        GROUP BY r.id, r.report_no, r.report_title, r.exam_date, r.hospital
+        ORDER BY r.exam_date DESC
+    </select>
+
+</mapper>

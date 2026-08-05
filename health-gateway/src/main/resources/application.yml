@@ -1,0 +1,72 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: health-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        - id: health-auth
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=1
+
+        - id: health-user
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1
+
+        - id: health-record
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/record/**
+          filters:
+            - StripPrefix=1
+
+        - id: health-warning
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/warning/**
+          filters:
+            - StripPrefix=1
+
+        - id: health-netty
+          uri: http://localhost:8086
+          predicates:
+            - Path=/api/netty/**
+          filters:
+            - StripPrefix=1
+
+gateway:
+  auth:
+    skip-urls: /api/auth/login,/actuator/**
+
+jwt:
+  secret: health-platform-secret-key-2024-jwt-secure-key
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO

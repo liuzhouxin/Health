@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.warning.mapper.HealthNewsMapper">
+
+    <resultMap id="HotNewsMap" type="com.health.warning.entity.HotNewsVO">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="summary" property="summary"/>
+        <result column="cover_image" property="coverImage"/>
+        <result column="category" property="category"/>
+        <result column="view_count" property="viewCount"/>
+        <result column="is_hot" property="isHot"/>
+        <result column="publish_time" property="publishTime"/>
+    </resultMap>
+
+    <select id="selectHotNews" resultMap="HotNewsMap">
+        SELECT id, title, summary, cover_image, category, view_count, is_hot, publish_time
+        FROM health_news
+        WHERE status = 1
+        ORDER BY is_top DESC, is_hot DESC, view_count DESC, publish_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectNewsByCategory" resultType="com.health.warning.entity.HealthNews">
+        SELECT * FROM health_news
+        WHERE status = 1
+        <if test="category != null and category != ''">
+            AND category = #{category}
+        </if>
+        ORDER BY publish_time DESC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

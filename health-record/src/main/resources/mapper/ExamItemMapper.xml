@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.record.mapper.ExamItemMapper">
+
+    <resultMap id="ExamItemMap" type="com.health.record.entity.ExamItem">
+        <id column="id" property="id"/>
+        <result column="item_code" property="itemCode"/>
+        <result column="item_name" property="itemName"/>
+        <result column="category" property="category"/>
+        <result column="unit" property="unit"/>
+        <result column="reference_min" property="referenceMin"/>
+        <result column="reference_max" property="referenceMax"/>
+        <result column="description" property="description"/>
+        <result column="is_common" property="isCommon"/>
+        <result column="sort_order" property="sortOrder"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <select id="selectCommonItems" resultMap="ExamItemMap">
+        SELECT * FROM exam_item WHERE is_common = 1 AND status = 1 ORDER BY sort_order
+    </select>
+
+</mapper>

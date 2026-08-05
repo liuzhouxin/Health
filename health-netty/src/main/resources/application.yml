@@ -1,0 +1,18 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: health-netty
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 3000ms
+
+netty:
+  server:
+    port: 9000
+
+knife4j:
+  enable: true

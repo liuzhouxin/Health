@@ -1,0 +1,6 @@
+{
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.jdt.ls.java.home": "D:/21.Java",
+    "spring-boot.tools.vmargs": "-Xmx2G"
+}

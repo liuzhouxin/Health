@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.health.record.mapper.ExamReportItemMapper">
+
+    <resultMap id="ReportItemMap" type="com.health.record.entity.ExamReportItem">
+        <id column="id" property="id"/>
+        <result column="report_id" property="reportId"/>
+        <result column="item_id" property="itemId"/>
+        <result column="item_name" property="itemName"/>
+        <result column="item_value" property="itemValue"/>
+        <result column="unit" property="unit"/>
+        <result column="reference_range" property="referenceRange"/>
+        <result column="is_abnormal" property="isAbnormal"/>
+        <result column="abnormal_level" property="abnormalLevel"/>
+        <result column="remark" property="remark"/>
+    </resultMap>
+
+    <select id="selectByReportId" resultMap="ReportItemMap">
+        SELECT * FROM exam_report_item WHERE report_id = #{reportId} ORDER BY id
+    </select>
+
+</mapper>
