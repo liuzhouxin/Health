@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@TableName("health_record")
+@TableName("health_record")//健康记录
 public class HealthRecord implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;

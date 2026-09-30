@@ -95,7 +95,7 @@
 </template>
 
 <script>
-import { listNews, getHotNews, getNewsDetail } from '@/api'
+import { listNews, getHotNews, getNewsDetail, createNews, updateNews, deleteNews } from '@/api'
 
 export default {
   name: 'NewsList',
@@ -143,6 +143,11 @@ export default {
     },
     async handleSubmit() {
       try {
+        if (this.form.id) {
+          await updateNews(this.form)
+        } else {
+          await createNews(this.form)
+        }
         this.$message.success('保存成功')
         this.dialogVisible = false
         this.loadData()
@@ -159,7 +164,13 @@ export default {
     },
     handleDelete(row) {
       this.$confirm('确定删除该资讯?', '提示', { type: 'warning' })
-        .then(() => { this.$message.success('删除成功'); this.loadData() })
+        .then(async () => {
+          try {
+            await deleteNews(row.id)
+            this.$message.success('删除成功')
+            this.loadData()
+          } catch (e) {}
+        })
         .catch(() => {})
     }
   }

@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -64,6 +65,27 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public Result<Void> delete(@PathVariable Long id) {
         return userService.deleteUser(id);
+    }
+
+    @GetMapping("/profile")
+    @ApiOperation("获取当前登录用户资料")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR','USER')")
+    public Result<SysUser> getProfile() {
+        return userService.getProfile();
+    }
+
+    @PutMapping("/profile")
+    @ApiOperation("更新当前登录用户资料")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR','USER')")
+    public Result<SysUser> updateProfile(@RequestBody SysUser user) {
+        return userService.updateProfile(user);
+    }
+
+    @PutMapping("/password")
+    @ApiOperation("修改当前登录用户密码")
+    @PreAuthorize("hasAnyRole('ADMIN','DOCTOR','USER')")
+    public Result<Void> changePassword(@RequestBody Map<String, String> body) {
+        return userService.changePassword(body.get("oldPassword"), body.get("newPassword"));
     }
 
     @GetMapping("/category/list")

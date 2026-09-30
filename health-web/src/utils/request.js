@@ -24,15 +24,7 @@ service.interceptors.response.use(
     if (res.code !== 200) {
       Message({ message: res.message || '错误', type: 'error', duration: 3000 })
       if (res.code === 401 || res.code === 4011 || res.code === 4012) {
-        MessageBox.confirm('登录已过期,请重新登录', '提示', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('logout').then(() => {
-            router.push('/login')
-          })
-        })
+        handleUnauthorized()
       }
       return Promise.reject(new Error(res.message || '错误'))
     }
@@ -41,10 +33,31 @@ service.interceptors.response.use(
   error => {
     Message({ message: error.message || '网络错误', type: 'error', duration: 3000 })
     if (error.response && error.response.status === 401) {
-      store.dispatch('logout').then(() => router.push('/login'))
+      handleUnauthorized()
     }
     return Promise.reject(error)
   }
 )
+
+let redirectingToLogin = false
+
+function handleUnauthorized() {
+  if (redirectingToLogin) return
+  redirectingToLogin = true
+  MessageBox.confirm('登录已过期,请重新登录', '提示', {
+    confirmButtonText: '重新登录',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(() => {
+    store.dispatch('logout')
+      .catch(() => {})
+      .then(() => router.push('/login').catch(() => {}))
+      .then(() => {
+        setTimeout(() => { redirectingToLogin = false }, 1000)
+      })
+  }).catch(() => {
+    redirectingToLogin = false
+  })
+}
 
 export default service

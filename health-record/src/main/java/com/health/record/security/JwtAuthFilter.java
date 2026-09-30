@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
+    // 处理用户登录成功后的权限信息
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String userIdHeader = request.getHeader(Constants.USER_ID_HEADER);

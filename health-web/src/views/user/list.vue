@@ -15,7 +15,7 @@
     <el-card>
       <div slot="header" class="flex-between">
         <span>用户列表</span>
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="handleAdd">新增用户</el-button>
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="handleAdd" v-if="canEdit">新增用户</el-button>
       </div>
       <el-table :data="tableData" v-loading="loading" stripe border>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
@@ -36,8 +36,9 @@
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right">
           <template slot-scope="{ row }">
-            <el-button type="text" size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button type="text" size="small" style="color:#f56c6c" @click="handleDelete(row)">删除</el-button>
+            <el-button type="text" size="small" @click="handleEdit(row)" v-if="canEdit">编辑</el-button>
+            <el-button type="text" size="small" style="color:#f56c6c" @click="handleDelete(row)" v-if="canDelete">删除</el-button>
+            <span v-if="!canEdit && !canDelete" style="color:#909399">仅查看</span>
           </template>
         </el-table-column>
       </el-table>
@@ -60,6 +61,13 @@
         </el-form-item>
         <el-form-item label="密码" v-if="!form.id">
           <el-input v-model="form.password" type="password" show-password></el-input>
+        </el-form-item>
+        <el-form-item label="角色">
+          <el-select v-model="form.roleCode" placeholder="请选择角色" style="width:100%">
+            <el-option label="普通用户" value="ROLE_USER"></el-option>
+            <el-option label="医生" value="ROLE_DOCTOR"></el-option>
+            <el-option label="系统管理员" value="ROLE_ADMIN"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="姓名">
           <el-input v-model="form.realName"></el-input>
@@ -109,6 +117,16 @@ export default {
       form: {}
     }
   },
+  computed: {
+    canEdit() {
+      const roles = this.$store.getters.roles || []
+      return roles.includes('ROLE_ADMIN')
+    },
+    canDelete() {
+      const roles = this.$store.getters.roles || []
+      return roles.includes('ROLE_ADMIN')
+    }
+  },
   mounted() {
     this.loadData()
   },
@@ -134,22 +152,29 @@ export default {
     handleSizeChange(size) { this.pageSize = size; this.loadData() },
     handleCurrentChange(page) { this.pageNo = page; this.loadData() },
     handleAdd() {
-      this.form = { gender: 1, status: 1 }
+      this.form = { gender: 1, status: 1, roleCode: 'ROLE_USER' }
       this.dialogTitle = '新增用户'
       this.dialogVisible = true
     },
     handleEdit(row) {
-      this.form = { ...row }
+      this.form = { ...row, roleCode: (row.roleCodes && row.roleCodes[0]) || '' }
       this.dialogTitle = '编辑用户'
       this.dialogVisible = true
     },
     handleDialogClose() { this.form = {} },
     async handleSubmit() {
       try {
-        if (this.form.id) {
-          await updateUser(this.form)
+        const data = { ...this.form }
+        if (data.roleCode) {
+          data.roleCodes = [data.roleCode]
         } else {
-          await createUser(this.form)
+          delete data.roleCodes
+        }
+        delete data.roleCode
+        if (data.id) {
+          await updateUser(data)
+        } else {
+          await createUser(data)
         }
         this.$message.success('操作成功')
         this.dialogVisible = false

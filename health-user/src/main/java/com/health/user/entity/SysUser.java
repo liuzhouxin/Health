@@ -29,4 +29,8 @@ public class SysUser implements Serializable {
     @TableLogic
     @TableField(fill = FieldFill.INSERT)
     private Integer deleted;
+
+    /** 角色编码列表(非表字段) */
+    @TableField(exist = false)
+    private java.util.List<String> roleCodes;
 }

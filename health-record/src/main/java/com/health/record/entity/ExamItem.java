@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-@TableName("exam_item")
+@TableName("exam_item")//体检项目
 public class ExamItem implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;

@@ -4,22 +4,22 @@
       <el-col :span="8">
         <el-card class="stat-card">
           <div class="stat-icon"><i class="el-icon-upload2"></i></div>
-          <div class="stat-value">{{ stats.totalReports || 0 }}</div>
-          <div class="stat-label">总上报次数</div>
+          <div class="stat-value">{{ stats.processedCount || 0 }}</div>
+          <div class="stat-label">已处理数据</div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card class="stat-card">
-          <div class="stat-icon success"><i class="el-icon-circle-check"></i></div>
-          <div class="stat-value">{{ stats.successCount || 0 }}</div>
-          <div class="stat-label">成功次数</div>
+          <div class="stat-icon success"><i class="el-icon-files"></i></div>
+          <div class="stat-value">{{ stats.queueSize || 0 }}</div>
+          <div class="stat-label">队列积压</div>
         </el-card>
       </el-col>
       <el-col :span="8">
         <el-card class="stat-card">
-          <div class="stat-icon warning"><i class="el-icon-circle-close"></i></div>
-          <div class="stat-value">{{ stats.failCount || 0 }}</div>
-          <div class="stat-label">失败次数</div>
+          <div class="stat-icon warning"><i class="el-icon-data-line"></i></div>
+          <div class="stat-value">{{ submitCount }}</div>
+          <div class="stat-label">本次会话上报</div>
         </el-card>
       </el-col>
     </el-row>
@@ -121,7 +121,7 @@ export default {
       dataForm: { deviceId: 'device_001', dataType: 'blood_pressure', data: '{"systolic":120,"diastolic":80}', reportTime: '' },
       batchForm: { devicePrefix: 'device_', count: 10, dataType: 'random' },
       submitting: false, batching: false,
-      stats: {}, historyList: []
+      stats: {}, historyList: [], submitCount: 0
     }
   },
   mounted() {
@@ -157,6 +157,7 @@ export default {
           data = JSON.parse(this.dataForm.data)
         } catch {
           this.$message.error('数据格式必须为JSON')
+          this.submitting = false
           return
         }
         const res = await submitHealthData({
@@ -167,6 +168,14 @@ export default {
         })
         if (res.code === 200) {
           this.$message.success('上报成功')
+          this.submitCount += 1
+          this.historyList.unshift({
+            deviceId: this.dataForm.deviceId,
+            dataType: this.dataForm.dataType,
+            data: data,
+            status: 'success',
+            createTime: Date.now()
+          })
           this.loadStats()
         } else {
           this.$message.error(res.message || '上报失败')
@@ -197,6 +206,7 @@ export default {
         const res = await batchSubmitData(list)
         if (res.code === 200) {
           this.$message.success(`批量上报成功,共${count}条数据`)
+          this.submitCount += count
           this.loadStats()
         }
       } catch (e) {

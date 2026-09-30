@@ -19,55 +19,61 @@ const routes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index.vue'),
-        meta: { title: '首页', icon: 'el-icon-s-home' }
+        meta: { title: '首页', icon: 'el-icon-s-home', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       },
       {
         path: 'user/list',
         name: 'UserList',
         component: () => import('@/views/user/list.vue'),
-        meta: { title: '用户管理', icon: 'el-icon-user' }
+        meta: { title: '用户管理', icon: 'el-icon-user', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR'] }
       },
       {
         path: 'user/category',
         name: 'CategoryList',
         component: () => import('@/views/user/category.vue'),
-        meta: { title: '档案分类', icon: 'el-icon-folder' }
+        meta: { title: '档案分类', icon: 'el-icon-folder', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       },
       {
         path: 'record/list',
         name: 'RecordList',
         component: () => import('@/views/record/list.vue'),
-        meta: { title: '健康记录', icon: 'el-icon-edit' }
+        meta: { title: '健康记录', icon: 'el-icon-edit', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       },
       {
         path: 'report/list',
         name: 'ReportList',
         component: () => import('@/views/report/list.vue'),
-        meta: { title: '体检报告', icon: 'el-icon-reading' }
+        meta: { title: '体检报告', icon: 'el-icon-reading', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       },
       {
         path: 'report/detail/:id',
         name: 'ReportDetail',
         component: () => import('@/views/report/detail.vue'),
-        meta: { title: '报告详情', hidden: true }
+        meta: { title: '报告详情', hidden: true, roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       },
       {
         path: 'warning/list',
         name: 'WarningList',
         component: () => import('@/views/warning/list.vue'),
-        meta: { title: '健康预警', icon: 'el-icon-warning' }
+        meta: { title: '健康预警', icon: 'el-icon-warning', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       },
       {
         path: 'news/list',
         name: 'NewsList',
         component: () => import('@/views/news/list.vue'),
-        meta: { title: '健康资讯', icon: 'el-icon-news' }
+        meta: { title: '健康资讯', icon: 'el-icon-news', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       },
       {
         path: 'health/data',
         name: 'HealthData',
         component: () => import('@/views/health/data.vue'),
-        meta: { title: '健康数据上报', icon: 'el-icon-upload2' }
+        meta: { title: '健康数据上报', icon: 'el-icon-upload2', roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('@/views/profile/index.vue'),
+        meta: { title: '个人中心', icon: 'el-icon-user', hidden: true, roles: ['ROLE_ADMIN', 'ROLE_DOCTOR', 'ROLE_USER'] }
       }
     ]
   }

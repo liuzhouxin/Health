@@ -3,7 +3,7 @@
     <el-card>
       <div slot="header" class="flex-between">
         <span>健康档案分类管理</span>
-        <el-button type="primary" size="small" icon="el-icon-plus" @click="handleAdd" v-if="canDelete">新增分类</el-button>
+        <el-button type="primary" size="small" icon="el-icon-plus" @click="handleAdd" v-if="canEdit">新增分类</el-button>
       </div>
       <el-table :data="tableData" v-loading="loading" stripe border>
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
@@ -23,9 +23,9 @@
         </el-table-column>
         <el-table-column label="操作" width="150" fixed="right">
           <template slot-scope="{ row }">
-            <el-button type="text" size="small" @click="handleEdit(row)" v-if="canDelete">编辑</el-button>
+            <el-button type="text" size="small" @click="handleEdit(row)" v-if="canEdit">编辑</el-button>
             <el-button type="text" size="small" style="color:#f56c6c" @click="handleDelete(row)" v-if="canDelete">删除</el-button>
-            <span v-if="!canDelete" style="color:#909399">仅查看</span>
+            <span v-if="!canEdit && !canDelete" style="color:#909399">仅查看</span>
           </template>
         </el-table-column>
       </el-table>
@@ -75,6 +75,10 @@ export default {
     }
   },
   computed: {
+    canEdit() {
+      const roles = this.$store.getters.roles || []
+      return roles.includes('ROLE_ADMIN')
+    },
     canDelete() {
       const roles = this.$store.getters.roles || []
       return roles.includes('ROLE_ADMIN')

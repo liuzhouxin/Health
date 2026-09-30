@@ -6,6 +6,14 @@ NProgress.configure({ showSpinner: false })
 
 const whiteList = ['/login']
 
+function hasPermission(roles, route) {
+  if (route.meta && route.meta.roles && route.meta.roles.length > 0) {
+    if (!roles || roles.length === 0) return false
+    return route.meta.roles.some(r => roles.includes(r))
+  }
+  return true
+}
+
 router.beforeEach(async (to, from, next) => {
   NProgress.start()
   document.title = to.meta.title ? to.meta.title + ' - 智慧健康管理系统' : '智慧健康管理系统'
@@ -16,7 +24,13 @@ router.beforeEach(async (to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      next()
+      const roles = store.getters.roles || []
+      if (hasPermission(roles, to)) {
+        next()
+      } else {
+        next('/dashboard')
+        NProgress.done()
+      }
     }
   } else {
     if (whiteList.includes(to.path)) {

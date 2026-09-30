@@ -124,6 +124,18 @@ export function getNewsDetail(id) {
   return request({ url: '/warning/news/' + id, method: 'get' })
 }
 
+export function createNews(data) {
+  return request({ url: '/warning/news', method: 'post', data })
+}
+
+export function updateNews(data) {
+  return request({ url: '/warning/news', method: 'put', data })
+}
+
+export function deleteNews(id) {
+  return request({ url: '/warning/news/' + id, method: 'delete' })
+}
+
 export function submitHealthData(data) {
   return request({ url: '/netty/data', method: 'post', data })
 }
@@ -134,4 +146,16 @@ export function batchSubmitData(data) {
 
 export function getNettyStats() {
   return request({ url: '/netty/stats', method: 'get' })
+}
+
+export function getProfile() {
+  return request({ url: '/user/profile', method: 'get' })
+}
+
+export function updateProfile(data) {
+  return request({ url: '/user/profile', method: 'put', data })
+}
+
+export function changePassword(data) {
+  return request({ url: '/user/password', method: 'put', data })
 }

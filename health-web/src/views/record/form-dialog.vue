@@ -4,6 +4,11 @@
       <el-form-item label="标题" prop="title">
         <el-input v-model="form.title"></el-input>
       </el-form-item>
+      <el-form-item label="档案分类" prop="categoryId">
+        <el-select v-model="form.categoryId" placeholder="请选择分类" style="width:100%">
+          <el-option v-for="c in categories" :key="c.id" :label="c.categoryName" :value="c.id"></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="记录类型" prop="recordType">
         <el-select v-model="form.recordType" placeholder="请选择类型" style="width:100%">
           <el-option label="血压" value="blood_pressure"></el-option>
@@ -54,7 +59,7 @@
 </template>
 
 <script>
-import { createRecord, updateRecord } from '@/api'
+import { createRecord, updateRecord, listCategories } from '@/api'
 
 export default {
   name: 'RecordFormDialog',
@@ -65,9 +70,11 @@ export default {
     return {
       visible: false,
       title: '新增记录',
+      categories: [],
       form: { recordType: 'blood_pressure', recordDate: new Date().toISOString().slice(0, 10) },
       rules: {
         title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+        categoryId: [{ required: true, message: '请选择档案分类', trigger: 'change' }],
         recordType: [{ required: true, message: '请选择类型', trigger: 'change' }],
         recordDate: [{ required: true, message: '请选择日期', trigger: 'change' }]
       }
@@ -87,7 +94,20 @@ export default {
       } else {
         this.form = { recordType: 'blood_pressure', recordDate: new Date().toISOString().slice(0, 10) }
       }
+      this.loadCategories()
       this.visible = true
+    },
+    async loadCategories() {
+      try {
+        const res = await listCategories()
+        if (res.code === 200 && Array.isArray(res.data)) {
+          this.categories = res.data
+          if (!this.form.categoryId) {
+            const def = this.categories.find(c => c.categoryCode === 'daily_monitor') || this.categories[0]
+            if (def) this.$set(this.form, 'categoryId', def.id)
+          }
+        }
+      } catch (e) {}
     },
     handleClose() { this.$refs.form && this.$refs.form.resetFields() },
     async handleSubmit() {

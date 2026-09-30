@@ -70,7 +70,6 @@ export default {
   data() {
     return {
       isCollapse: false,
-      user: null,
       activeMenu: '/dashboard'
     }
   },
@@ -78,7 +77,13 @@ export default {
     ...mapGetters(['user', 'roles']),
     menuRoutes() {
       const routes = this.$router.options.routes.find(r => r.path === '/')
-      return routes ? routes.children.filter(c => !c.meta.hidden) : []
+      if (!routes) return []
+      return routes.children.filter(c => {
+        if (c.meta.hidden) return false
+        if (!c.meta.roles || c.meta.roles.length === 0) return true
+        const userRoles = this.roles || []
+        return c.meta.roles.some(r => userRoles.includes(r))
+      })
     },
     userAvatar() {
       return this.user && this.user.avatar ? '' : 'el-icon-user-solid'
@@ -93,7 +98,6 @@ export default {
       try {
         const res = await getUserInfo()
         if (res.code === 200 && res.data) {
-          this.user = res.data
           this.$store.commit('SET_USER', res.data)
         }
       } catch (e) {}
@@ -109,7 +113,7 @@ export default {
         this.$store.dispatch('logout')
         this.$router.push('/login')
       } else if (command === 'profile') {
-        this.$message.info('个人中心功能开发中')
+        this.$router.push('/profile')
       }
     }
   },

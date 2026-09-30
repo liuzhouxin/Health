@@ -89,8 +89,9 @@
         </el-table-column>
         <el-table-column label="操作" width="180" fixed="right">
           <template slot-scope="{ row }">
-            <el-button type="text" size="small" @click="handleProcess(row)" v-if="!row.isHandled">处理</el-button>
+            <el-button type="text" size="small" @click="handleProcess(row)" v-if="!row.isHandled && canHandle">处理</el-button>
             <el-button type="text" size="small" style="color:#f56c6c" @click="handleDelete(row)" v-if="canDelete">删除</el-button>
+            <span v-if="!canHandle && !canDelete" style="color:#909399">仅查看</span>
           </template>
         </el-table-column>
       </el-table>
@@ -140,6 +141,10 @@ export default {
     }
   },
   computed: {
+    canHandle() {
+      const roles = this.$store.getters.roles || []
+      return roles.some(r => r === 'ROLE_ADMIN' || r === 'ROLE_DOCTOR')
+    },
     canDelete() {
       const roles = this.$store.getters.roles || []
       return roles.includes('ROLE_ADMIN')
